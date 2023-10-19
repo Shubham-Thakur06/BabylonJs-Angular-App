@@ -1,0 +1,14 @@
+<div class="input-container">
+    <label for="planeWidth">Plane Width:</label>
+    <input type="number" id="planeWidth" name="planeWidth" [(ngModel)]="planeWidth"
+        (ngModelChange)="updateWorkPlaneDimensions()">
+    <label for="planeHeight">Plane Height:</label>
+    <input type="number" id="planeHeight" name="planeHeight" [(ngModel)]="planeHeight"
+        (ngModelChange)="updateWorkPlaneDimensions()">
+</div>
+
+<canvas #renderCanvas [style.boxShadow]="'0 0 20px 10px ' + boundaryShadowColor"></canvas>
+
+<div class = "bottom-text" [style.color]="boundaryShadowColor">
+    Current Mode: {{ currentMode }}
+</div>

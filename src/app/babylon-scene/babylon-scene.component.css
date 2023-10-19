@@ -1,0 +1,11 @@
+.input-container {
+    margin: 3%;
+}
+
+canvas {
+    height: 65vh;
+}
+
+.bottom-text {
+    margin-top: 20px;
+}
