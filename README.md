@@ -14,7 +14,7 @@ The BabylonJs Angular App is a basic tool for working with 3D geometries. It all
 
 ## Features
 
-The 3D Geometry Interaction App boasts a range of features:
+The BabylonJs Angular App boasts a range of features:
 
 - **Draw 2D Polygons**: Use the Draw Service to make linear 2D shapes.
 
