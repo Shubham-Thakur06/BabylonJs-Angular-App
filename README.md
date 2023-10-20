@@ -26,7 +26,7 @@ The BabylonJs Angular App boasts a range of features:
 
 ## Installation
 
-Getting started with the 3D Geometry Interaction App is straightforward. Follow these steps:
+Getting started with the BabylonJs Angular App is straightforward. Follow these steps:
 
 1. **Clone the Repository**: Begin by cloning the app's repository to your local machine.
 
@@ -50,12 +50,12 @@ Now you're ready to start using the 3D Geometry Interaction App.
 
 ## Usage
 
-Using the app is intuitive, and we've designed it to be user-friendly. Here are some basic usage instructions:
+Using the app is intuitive, and I've designed it to be user-friendly. Here are some basic usage instructions:
 
 2. **Draw 2D Polygons**:
 
-    - Left-Click to start drawing a 2D polygon.
-    - Right-Click to finish the 2D polygon.
+    - Left-click to start drawing a 2D polygon.
+    - Right-click to finish the 2D polygon.
 
 2. **Extrude 3D Polygons**:
 
@@ -66,7 +66,7 @@ Using the app is intuitive, and we've designed it to be user-friendly. Here are 
 
     - Click on a 3D object to select it.
     - Use the gizmo to move, rotate, or scale the object.
-    - Deselect by right-clicking or selecting another object.
+    - De-select by right-clicking or selecting another object.
 
 4. **Edit Vertices**:
 
