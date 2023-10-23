@@ -8,9 +8,10 @@ import { SharedService } from './shared.service';
 export class MoveService {
   private canvas: HTMLCanvasElement | null = null;
   private scene: BABYLON.Scene | null = null;
-  private selectedMesh: BABYLON.AbstractMesh | null = null;
+  private selectedMesh: BABYLON.Mesh | null = null;
   private utilLayer: BABYLON.UtilityLayerRenderer | null = null;
   private positionGizmo: BABYLON.PositionGizmo | null = null;
+  private pickedPoint:BABYLON.Vector3 | null;
 
   constructor(private sharedService: SharedService) { }
 
@@ -26,7 +27,7 @@ export class MoveService {
       if (pickInfo && pickInfo.hit && pickInfo.pickedMesh) {
         const pickedMesh = pickInfo.pickedMesh;
         if (pickedMesh instanceof BABYLON.AbstractMesh && pickedMesh.name === "extrudedMesh") {
-          this.selectMesh(pickedMesh);
+          this.selectMesh(pickedMesh as BABYLON.Mesh);
         }
       }
     } else if (evt.button === 2) { // Right click
@@ -34,7 +35,7 @@ export class MoveService {
     }
   }
 
-  private selectMesh(mesh: BABYLON.AbstractMesh) {
+  private selectMesh(mesh: BABYLON.Mesh) {
     if (this.selectedMesh !== mesh) this.deselectMesh();
     if (!this.scene) return;
     this.selectedMesh = mesh;
@@ -45,10 +46,34 @@ export class MoveService {
     this.utilLayer = new BABYLON.UtilityLayerRenderer(this.scene);
     this.positionGizmo = new BABYLON.PositionGizmo(this.utilLayer);
     this.positionGizmo.attachedMesh = this.selectedMesh;
+    this.pickedPoint = this.selectedMesh.position.clone();
+    this.positionGizmo.onDragEndObservable.add(this.onGizmoDragEndObservable.bind(this));
   }
 
+  private onGizmoDragEndObservable (eventData: unknown, eventState: BABYLON.EventState) {
+    const transformMesh = this.positionGizmo?.attachedMesh;
+    if (!this.pickedPoint || !transformMesh) return;
+    const delta = transformMesh.position.subtract(this.pickedPoint);
+    const verticesData = transformMesh.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    if (!verticesData) return;
+    const vertices = [];
+    for (let i = 0; i < verticesData.length; i += 3) {
+      let vertex = new BABYLON.Vector3(verticesData[i], verticesData[i + 1], verticesData[i + 2]);
+      vertex.addInPlace(delta);
+      vertices.push(vertex);
+    }
+    const positions = [];
+    for (let i = 0; i < vertices.length; ++i) {
+      const vert = vertices[i];
+      positions.push(vert.x, vert.y, vert.z);
+    }
+    // this.pickedPoint.addInPlace(delta);
+    this.selectedMesh?.bakeCurrentTransformIntoVertices(true);
+    this.selectedMesh?.updateVerticesData(BABYLON.VertexBuffer.PositionKind, positions);
+    this.selectedMesh?.bakeCurrentTransformIntoVertices(true);
+  }
   private deselectMesh() {
-    if(this.selectedMesh) {
+    if (this.selectedMesh) {
       if (!this.selectedMesh.actionManager?.hasSpecificTrigger(BABYLON.ActionManager.OnPointerOutTrigger)) {
         let action = new BABYLON.SetValueAction(
           BABYLON.ActionManager.OnPointerOutTrigger,
@@ -65,6 +90,7 @@ export class MoveService {
     this.selectedMesh = null;
     this.positionGizmo?.dispose();
     this.utilLayer?.dispose();
+    this.pickedPoint = null;
   }
 
   public destroy() {
