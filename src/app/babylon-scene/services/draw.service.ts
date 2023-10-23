@@ -117,7 +117,7 @@ export class DrawService {
         )
       );
     }
-    solidLine.isNearPickable = true;
+    solidLine.isPickable = true;
 
     return solidLine;
   }
