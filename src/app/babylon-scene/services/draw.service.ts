@@ -82,7 +82,7 @@ export class DrawService {
       'polygon',
       {
         points: vertices,
-        updatable: false
+        updatable: true
       },
       this.scene
     );
@@ -121,16 +121,21 @@ export class DrawService {
 
     return solidLine;
   }
-
+  
   private closePolygon() {
     if (this.polygonVertices.length >= 3) {
       // Closing the polygon by connecting the last vertex to the first
       this.polygonVertices.push(this.polygonVertices[0]);
       this.linesMesh = this.createSolidLine(this.polygonVertices);
     }
-
+    
     // Clearing the polygon vertices to start a new polygon
     this.polygonVertices = [];
+
+    if (this.temporaryLine) {
+      this.temporaryLine.dispose();
+      this.temporaryLine = null;
+    }
   }
 
   public destroy() {

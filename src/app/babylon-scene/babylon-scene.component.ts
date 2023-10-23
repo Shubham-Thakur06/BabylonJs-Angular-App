@@ -220,7 +220,7 @@ export class BabylonSceneComponent implements AfterViewInit, OnDestroy {
           break;
           case Mode.EditVertex:
             this.currentService = this.editVertexService;
-            this.currentService.init(this.canvas, this.scene);
+            this.currentService.init(this.canvas, this.scene, this.camera);
         break;
       default:
         this.currentService = null;

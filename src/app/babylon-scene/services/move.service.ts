@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as BABYLON from '@babylonjs/core';
+import { SharedService } from './shared.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class MoveService {
   private utilLayer: BABYLON.UtilityLayerRenderer | null = null;
   private positionGizmo: BABYLON.PositionGizmo | null = null;
 
-  constructor() { }
+  constructor(private sharedService: SharedService) { }
 
   public init(canvas: HTMLCanvasElement, scene: BABYLON.Scene) {
     this.canvas = canvas;
@@ -34,51 +35,42 @@ export class MoveService {
   }
 
   private selectMesh(mesh: BABYLON.AbstractMesh) {
-    if (this.selectedMesh) {
-      this.deselectMesh();
-    }
-    if (this.scene) {
-      this.selectedMesh = mesh;
-      // if (this.selectedMesh.actionManager?.hasSpecificTrigger(BABYLON.ActionManager.OnPointerOutTrigger)) {
-      //   this.selectedMesh.actionManager?.registerAction(
-      //     new BABYLON.SetValueAction(
-      //       BABYLON.ActionManager.OnPointerOutTrigger,
-      //       this.selectedMesh.material,
-      //       "diffuseColor",
-      //       new BABYLON.Color3(0, 0, 1)
-      //     )
-      //   );
-      // }
-      this.utilLayer = new BABYLON.UtilityLayerRenderer(this.scene);
-      this.positionGizmo = new BABYLON.PositionGizmo(this.utilLayer);
-      this.positionGizmo.attachedMesh = this.selectedMesh;
-    }
+    if (this.selectedMesh !== mesh) this.deselectMesh();
+    if (!this.scene) return;
+    this.selectedMesh = mesh;
+    let action = this.sharedService.removeFromPointerOutMap(this.selectedMesh);
+    if (this.selectedMesh.actionManager?.hasSpecificTrigger(BABYLON.ActionManager.OnPointerOverTrigger) && action)
+      this.selectedMesh.actionManager.unregisterAction(action);
+
+    this.utilLayer = new BABYLON.UtilityLayerRenderer(this.scene);
+    this.positionGizmo = new BABYLON.PositionGizmo(this.utilLayer);
+    this.positionGizmo.attachedMesh = this.selectedMesh;
   }
 
   private deselectMesh() {
-    if (this.positionGizmo) {
-      if (this.selectedMesh)
-        // if (!this.selectedMesh.actionManager?.hasSpecificTrigger(BABYLON.ActionManager.OnPointerOutTrigger)) {
-        //   this.selectedMesh.actionManager?.registerAction(
-        //     new BABYLON.SetValueAction(
-        //       BABYLON.ActionManager.OnPointerOutTrigger,
-        //       this.selectedMesh.material,
-        //       "diffuseColor",
-        //       new BABYLON.Color3(1, 1, 1)
-        //     )
-        //   );
-        // }
-      this.selectedMesh = null;
-      this.positionGizmo.attachedMesh = null;
-      this.positionGizmo.dispose();
-      this.utilLayer?.dispose();
+    if(this.selectedMesh) {
+      if (!this.selectedMesh.actionManager?.hasSpecificTrigger(BABYLON.ActionManager.OnPointerOutTrigger)) {
+        let action = new BABYLON.SetValueAction(
+          BABYLON.ActionManager.OnPointerOutTrigger,
+          this.selectedMesh.material,
+          "diffuseColor",
+          new BABYLON.Color3(0.75, 0.75, 0.75)
+        );
+        this.selectedMesh?.actionManager?.registerAction(action);
+        this.sharedService.addToPointerOutMap(this.selectedMesh, action);
+      }
+      let material = this.selectedMesh.material as BABYLON.StandardMaterial;
+      material.diffuseColor = new BABYLON.Color3(0.75, 0.75, 0.75);
     }
+    this.selectedMesh = null;
+    this.positionGizmo?.dispose();
+    this.utilLayer?.dispose();
   }
 
   public destroy() {
     // Removing gizmo and listeners
     if (this.canvas) {
-      this.canvas.addEventListener("pointerdown", this.onPointerDown);
+      this.canvas.removeEventListener("pointerdown", this.onPointerDown);
       this.canvas = null;
     }
     if (this.selectedMesh) {
