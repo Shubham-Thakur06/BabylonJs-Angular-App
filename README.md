@@ -22,7 +22,8 @@ The BabylonJs Angular App boasts a range of features:
 
 - **Move and Interact with Objects**: The Move Service allows you to select and interact with 3D objects. Move them with ease. A handy gizmo makes translation a breeze.
 
-- **Edit Vertices**: With the Edit-Vertex Service, you can fine-tune the vertices of your geometries. Make precise adjustments to achieve the shape you desire.(In Progress)
+- **Edit Vertices**: With the Edit-Vertex Service, you can fine-tune the vertices of your geometries. Make precise adjustments to achieve the shape you desire.
+-- [reference code](https://playground.babylonjs.com/#8QGENL#1) 
 
 ## Installation
 
@@ -31,7 +32,7 @@ Getting started with the BabylonJs Angular App is straightforward. Follow these 
 1. **Clone the Repository**: Begin by cloning the app's repository to your local machine.
 
     ```bash
-    git clone https://github.com/your/repo.git
+    git clone https://github.com/Shubham-Thakur06/BabylonJs-Angular-App.git
     ```
 
 2. **Install Dependencies**: Ensure you have the necessary dependencies installed. Use npm to install them.
@@ -52,7 +53,7 @@ Now you're ready to start using the 3D Geometry Interaction App.
 
 Using the app is intuitive, and I've designed it to be user-friendly. Here are some basic usage instructions:
 
-2. **Draw 2D Polygons**:
+1. **Draw 2D Polygons**:
 
     - Left-click to start drawing a 2D polygon.
     - Right-click to finish the 2D polygon.
@@ -73,6 +74,7 @@ Using the app is intuitive, and I've designed it to be user-friendly. Here are s
     - Select a geometry.
     - Use the Edit-Vertex Service to manipulate individual vertices.
     - Achieve precise adjustments for your 3D shapes.
+- press `Esc` to exit any service
 
 ## Services
 
