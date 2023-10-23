@@ -48,19 +48,29 @@ export class ExtrudeService {
       updatable: true
     }, this.scene, EARCUT);
 
+    const meshVerticesData = extrudedPolygon.getVerticesData(BABYLON.VertexBuffer.PositionKind);
+    
+    if (meshVerticesData) {
+      // Loop through the vertices data and update the Y-coordinate
+      for (let i = 1; i < meshVerticesData.length; i += 3) {
+        // Update the Y-coordinate by adding 5
+        meshVerticesData[i] += 5;
+      }
+      // Update the vertices data in the extruded mesh
+      extrudedPolygon.updateVerticesData(BABYLON.VertexBuffer.PositionKind, meshVerticesData);
+      extrudedPolygon.bakeCurrentTransformIntoVertices(true);
+    }
+    
     // Creating a new material for the extruded polygon
     if (!this.scene) return;
-
     const material = new BABYLON.StandardMaterial("extrudedMaterial", this.scene);
-
     // Setting the diffuse color to the color you want (e.g., red)
     material.diffuseColor = new BABYLON.Color3(0.75, 0.75, 0.75);
-
     // Setting the emissive color to black to create black edges
     material.emissiveColor = new BABYLON.Color3(0, 0, 0);
-
     // Applying the material to the extruded polygon
     extrudedPolygon.material = material;
+
     if (!extrudedPolygon.actionManager)
       extrudedPolygon.actionManager = new BABYLON.ActionManager(this.scene);
 
@@ -85,9 +95,6 @@ export class ExtrudeService {
       extrudedPolygon.actionManager.registerAction(action);
       this.sharedService.addToPointerOutMap(extrudedPolygon, action);
     }
-
-    extrudedPolygon.position.y = 5;
-
     // Disposing of the original polygonMesh
     polygonMesh.dispose();
   }

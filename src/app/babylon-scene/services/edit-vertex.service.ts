@@ -180,7 +180,7 @@ class VerticesManipulator {
   }
 
   updateVertices(mesh: BABYLON.Mesh) {
-    mesh.bakeCurrentTransformIntoVertices();
+    mesh.bakeCurrentTransformIntoVertices(true);
     const mesh2 = this.meshes.get(mesh);
     if (!mesh2) {
       return;
